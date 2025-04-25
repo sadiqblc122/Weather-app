@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Weather App</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Weather App</h1>
+
+    <form id="weather-form">
+
+      <input type="text" id="city" placeholder="Enter city name">
+
+      <input type="submit" value="Get Weather">
+
+    </form>
+
+    <div class="weather-data">
+
+      <div class="icon">
+
+        <img src="" alt="Weather Icon">
+
+      </div>
+
+      <div class="temp">Temperature will appear here</div>
+
+      <div class="desc">Weather description will appear here</div>
+
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html><style>* {
+
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+  font-family: Arial, sans-serif;
+
+}
+
+body {
+
+  height: 100vh;
+
+  width: 100%;
+
+  background-color: #96bdc6;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background-size: cover;
+
+  background-position: center;
+
+  transition: background-image 0.5s ease;
+
+}
+
+.container {
+
+background: linear-gradient(to right, #2BC0E4, #EAECC6);
+
+  padding: 30px;
+
+  border-radius: 10px;
+
+  text-align: center;
+
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+
+  width: 90%;
+
+  max-width: 400px;
+
+}
+
+form {
+
+  margin-bottom: 20px;
+
+}
+
+input[type="text"] {
+
+  padding: 10px;
+
+  font-size: 16px;
+
+  width: 70%;
+
+  border: 1px solid #ccc;
+
+  border-radius: 5px;
+
+}
+
+input[type="submit"] {
+
+  padding: 10px 20px;
+
+  font-size: 16px;
+
+  background-color: #2196F3;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 5px;
+
+  margin-left: 10px;
+
+  cursor: pointer;
+
+}
+
+.icon img {
+
+  width: 100px;
+
+  height: 100px;
+
+}
+
+.temp {
+
+  font-size: 28px;
+
+  margin-top: 15px;
+
+  font-weight: bold;
+
+}
+
+.desc {
+
+  font-size: 20px;
+
+  margin-top: 10px;
+
+}</style><script>const apiKey = "5c4c1c378c07f73ff3a46c6b0e51560c";
+
+const form = document.getElementById("weather-form");
+
+const cityInput = document.getElementById("city");
+
+const tempDisplay = document.querySelector(".temp");
+
+const descDisplay = document.querySelector(".desc");
+
+const iconDisplay = document.querySelector(".icon img");
+
+const body = document.body;
+
+form.addEventListener("submit", async function (e) {
+
+  e.preventDefault();
+
+  const city = cityInput.value.trim();
+
+  if (city === "") {
+
+    tempDisplay.innerText = "Please enter a city name.";
+
+    return;
+
+  }
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+  try {
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    if (data.cod === 200) {
+
+      const temp = data.main.temp;
+
+      const desc = data.weather[0].description;
+
+      const iconCode = data.weather[0].icon;
+
+      const mainWeather = data.weather[0].main.toLowerCase();
+
+      tempDisplay.innerText = `${temp}°C`;
+
+      descDisplay.innerText = desc.charAt(0).toUpperCase() + desc.slice(1);
+
+      iconDisplay.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+      // Background based on weather
+
+      if (mainWeather.includes("clear")) {
+
+        body.style.backgroundImage = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb')";
+
+      } else if (mainWeather.includes("cloud")) {
+
+        body.style.backgroundImage = "url('https://images.unsplash.com/photo-1499346030926-9a72daac6c63')";
+
+      } else if (mainWeather.includes("rain")) {
+
+        body.style.backgroundImage = "url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29')";
+
+      } else if (mainWeather.includes("snow")) {
+
+        body.style.backgroundImage = "url('https://images.unsplash.com/photo-1608889175822-7d9f3f6e6f4a')";
+
+      } else {
+
+        body.style.backgroundImage = "url('https://images.unsplash.com/photo-1529676468690-85f3ce9b0f01')";
+
+      }
+
+    } else {
+
+      tempDisplay.innerText = "City not found.";
+
+      descDisplay.innerText = "";
+
+      iconDisplay.src = "";
+
+    }
+
+  } catch (error) {
+
+    tempDisplay.innerText = "Error fetching weather.";
+
+  }
+
+});</script>
